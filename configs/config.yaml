@@ -1,0 +1,112 @@
+# ─────────────────────────────────────────────
+#  Project: Multilingual Hate Speech & Misinfo Detector
+#  Author : Jay Modhiya | Krishna Nandi
+# ─────────────────────────────────────────────
+
+project:
+  name: "multilingual-hate-misinfo"
+  version: "1.0.0"
+  seed: 42
+
+# ── Paths ────────────────────────────────────
+paths:
+  data_raw:        "data/raw"
+  data_processed:  "data/processed"
+  model_dir:       "models/saved"
+  logs_dir:        "logs"
+  mlflow_uri:      "mlruns"            # local; swap for remote URI on AWS
+  lime_output:     "outputs/lime"
+
+# ── Datasets ─────────────────────────────────
+datasets:
+  davidson:
+    name:    "Davidson"
+    lang:    "en"
+    source:  "huggingface"
+    hf_id:   "tweet_eval"
+    hf_subset: "hate"
+    local_fallback: "data/raw/davidson.csv"
+    classes: ["non-hate", "hate"]
+
+  hasoc:
+    name:    "HASOC"
+    lang:    "hi"                        # Hindi / Hinglish
+    source:  "huggingface"
+    hf_id:   "cfilt/iitb-english-hindi"  # will be overridden by HASOC loader
+    local_fallback: "data/raw/hasoc_2019.csv"
+    classes: ["NOT", "HOF"]              # HOF = Hate & Offensive
+
+  fakenewsnet:
+    name:    "FakeNewsNet"
+    lang:    "en"
+    source:  "github"
+    github_url: "https://raw.githubusercontent.com/KaiDMML/FakeNewsNet/master/dataset"
+    local_fallback: "data/raw/fakenewsnet.csv"
+    classes: ["real", "fake"]
+
+# ── Preprocessing ────────────────────────────
+preprocessing:
+  max_length:      128          # token length for MuRIL
+  test_size:       0.20
+  val_size:        0.10
+  stratify:        true
+  languages:       ["en", "hi", "hinglish"]
+  remove_urls:     true
+  remove_mentions: true
+  remove_hashtags: false        # keep for context
+
+# ── Model ─────────────────────────────────────
+model:
+  name:            "MuRIL"
+  hf_checkpoint:   "google/muril-base-cased"
+  num_labels_hate: 2            # hate / not-hate
+  num_labels_fake: 2            # real / fake
+  dropout:         0.3
+  hidden_size:     768
+
+# ── Training ──────────────────────────────────
+training:
+  epochs:          3
+  batch_size:      32
+  learning_rate:   2.0e-5
+  weight_decay:    0.01
+  warmup_ratio:    0.10
+  gradient_clip:   1.0
+  fp16:            true         # enable on Kaggle GPU
+  optimizer:       "AdamW"
+  scheduler:       "linear_warmup"
+  early_stopping_patience: 2
+
+# ── MLflow ────────────────────────────────────
+mlflow:
+  experiment_name: "muril-multilingual-hate"
+  tracking_uri:    "mlruns"
+  log_artifacts:   true
+  tags:
+    team:    "Jay-Krishna"
+    subject: "NLPA+MLOps"
+
+# ── Explainability (LIME) ─────────────────────
+lime:
+  num_features:    15
+  num_samples:     500
+  top_labels:      1
+
+# ── Bias Analysis ─────────────────────────────
+bias:
+  protected_attributes: ["language", "script"]
+  metrics: ["accuracy", "f1", "fpr", "fnr"]
+
+# ── Monitoring ────────────────────────────────
+monitoring:
+  drift_method:    "ks_test"    # Kolmogorov-Smirnov
+  drift_threshold: 0.05
+  log_predictions: true
+
+# ── AWS ───────────────────────────────────────
+aws:
+  region:          "ap-south-1"  # Mumbai — closest to Pune
+  s3_bucket:       "muril-hate-misinfo-artifacts"
+  ecr_repo:        "muril-hate-misinfo"
+  ec2_instance:    "t2.micro"    # free tier
+  port:            8501          # Streamlit default
