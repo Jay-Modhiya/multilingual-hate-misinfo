@@ -1,0 +1,5 @@
+outs:
+- md5: 44f292abeca2dd5a380527bdc1f47631
+  size: 625798
+  hash: md5
+  path: hasoc_test.tsv

@@ -19,7 +19,8 @@ models/saved/*.pt
 models/saved/*.bin
 
 # Data (versioned via DVC)
-data/raw/
+data/raw/*
+!data/raw/*.dvc
 data/processed/
 
 # MLflow runs

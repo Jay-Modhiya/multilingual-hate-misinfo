@@ -1,0 +1,5 @@
+outs:
+- md5: 6907321a5fd02f7e228e3c5b442660e1
+  size: 1735010
+  hash: md5
+  path: hasoc_train.tsv
