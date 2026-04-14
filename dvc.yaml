@@ -1,0 +1,40 @@
+stages:
+  # Stage 1 — Data preparation
+  prepare:
+    cmd: python src/data/loader.py
+    deps:
+      - src/data/loader.py
+      - src/data/preprocessor.py
+      - configs/config.yaml
+      - data/raw/hasoc_train.tsv
+      - data/raw/hasoc_test.tsv
+    outs:
+      - data/processed/
+
+  # Stage 2 — Train hate model
+  train_hate:
+    cmd: python src/training/trainer.py --task hate
+    deps:
+      - src/training/trainer.py
+      - src/models/muril_classifier.py
+      - src/models/evaluator.py
+      - data/raw/hasoc_train.tsv
+      - configs/config.yaml
+    outs:
+      - models/saved/muril_hate_best.pt
+    metrics:
+      - outputs/metrics_hate.json:
+          cache: false
+
+  # Stage 3 — Train misinfo model
+  train_misinfo:
+    cmd: python src/training/trainer.py --task misinfo
+    deps:
+      - src/training/trainer.py
+      - src/models/muril_classifier.py
+      - configs/config.yaml
+    outs:
+      - models/saved/muril_misinfo_best.pt
+    metrics:
+      - outputs/metrics_misinfo.json:
+          cache: false

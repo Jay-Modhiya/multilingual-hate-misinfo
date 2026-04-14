@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Model files (large — stored in S3 via DVC)
+models/saved/*.pt
+models/saved/*.bin
+
+# Data (versioned via DVC)
+data/raw/
+data/processed/
+
+# MLflow runs
+mlruns/
+
+# Outputs (generated)
+outputs/*.png
+outputs/*.json
+
+# Streamlit cache
+.streamlit/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Jupyter
+.ipynb_checkpoints/
+
+# DVC
+.dvc/cache/
+.dvc/tmp/
+
+# Env files
+.env
+*.env
