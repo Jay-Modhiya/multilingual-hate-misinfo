@@ -263,7 +263,7 @@ def train(cfg: dict, task: str = "hate"):
             "test_f1":        test_metrics["f1"],
         })
 
-        # Save confusion matrix as artifact
+        # ── Save confusion matrix ──
         cm_path = f"outputs/confusion_matrix_{task}.png"
         os.makedirs("outputs", exist_ok=True)
         plot_confusion_matrix(
@@ -272,8 +272,46 @@ def train(cfg: dict, task: str = "hate"):
             save_path=cm_path
         )
         mlflow.log_artifact(cm_path)
+
+        # ── Log model weights as artifact ──
         mlflow.log_artifact(best_model_path)
 
+        # ── Log classification report as text artifact ──
+        report_path = f"outputs/classification_report_{task}.txt"
+        with open(report_path, "w") as f:
+            f.write(f"MuRIL — {task.upper()} Task\n")
+            f.write(f"{'='*50}\n")
+            f.write(f"Model     : {cfg['model']['hf_checkpoint']}\n")
+            f.write(f"Task      : {task}\n")
+            f.write(f"Accuracy  : {test_metrics['accuracy']:.2f}%\n")
+            f.write(f"Precision : {test_metrics['precision']:.2f}%\n")
+            f.write(f"Recall    : {test_metrics['recall']:.2f}%\n")
+            f.write(f"F1-Score  : {test_metrics['f1']:.2f}%\n")
+            f.write(f"{'='*50}\n\n")
+            f.write(full_report(test_labels, test_preds, label_map))
+        mlflow.log_artifact(report_path)
+
+        # ── Log sample predictions as CSV artifact ──
+        import pandas as pd
+        sample_size = min(20, len(test_labels))
+        sample_df = pd.DataFrame({
+            "true_label":  [label_map[l] for l in test_labels[:sample_size]],
+            "pred_label":  [label_map[p] for p in test_preds[:sample_size]],
+            "correct":     [l == p for l, p in zip(test_labels[:sample_size], test_preds[:sample_size])],
+        })
+        sample_path = f"outputs/sample_predictions_{task}.csv"
+        sample_df.to_csv(sample_path, index=False)
+        mlflow.log_artifact(sample_path)
+
+        # ── Log config as artifact ──
+        mlflow.log_artifact("configs/config.yaml")
+
+        logger.info(f"\nMLflow artifacts logged:")
+        logger.info(f"  - Model weights    : {best_model_path}")
+        logger.info(f"  - Confusion matrix : {cm_path}")
+        logger.info(f"  - Classification report: {report_path}")
+        logger.info(f"  - Sample predictions: {sample_path}")
+        logger.info(f"  - Config file      : configs/config.yaml")
         logger.info(f"\nMLflow run complete. Model saved at: {best_model_path}")
 
     return test_metrics
