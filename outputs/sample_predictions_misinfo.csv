@@ -1,0 +1,5 @@
+text,true_label,pred_label,correct
+Scientists confirm 5G causes virus,fake,fake,True
+Government announces budget,real,real,True
+Secret cure suppressed by pharma,fake,fake,True
+Olympic committee selects host city,real,real,True

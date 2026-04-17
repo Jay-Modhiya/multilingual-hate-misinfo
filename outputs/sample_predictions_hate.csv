@@ -1,0 +1,5 @@
+text,true_label,pred_label,correct
+You people go back where you came from,hate,hate,True
+I love cricket today,not_hate,not_hate,True
+Die you horrible people,hate,hate,True
+Weather is nice today,not_hate,not_hate,True
