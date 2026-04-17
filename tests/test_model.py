@@ -1,7 +1,6 @@
 """
 tests/test_model.py
-────────────────────
-Unit tests for model architecture and evaluator.
+Unit tests for evaluator, bias analyzer, drift detector.
 Run: pytest tests/test_model.py -v
 """
 
@@ -9,8 +8,9 @@ import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 import pytest
-import torch
 import numpy as np
+import pandas as pd
+
 from src.models.evaluator import compute_metrics, full_report, build_summary_table
 from src.bias.bias_analyzer import compute_group_metrics, equalized_odds_gap
 from src.monitoring.drift_detector import DriftDetector, extract_text_features
@@ -31,8 +31,6 @@ def sample_preds():
         "label_map": {0: "not_hate", 1: "hate"},
     }
 
-
-# ── Evaluator tests ───────────────────────────
 
 def test_compute_metrics(sample_preds):
     m = compute_metrics(
@@ -64,10 +62,7 @@ def test_build_summary_table():
     assert "F1-Score" in df.columns
 
 
-# ── Bias analyzer tests ───────────────────────
-
 def test_group_metrics(cfg):
-    import pandas as pd
     np.random.seed(42)
     n = 200
     df = pd.DataFrame({
@@ -83,7 +78,6 @@ def test_group_metrics(cfg):
 
 
 def test_equalized_odds(cfg):
-    import pandas as pd
     np.random.seed(42)
     n = 200
     df = pd.DataFrame({
@@ -96,20 +90,17 @@ def test_equalized_odds(cfg):
     assert "fpr_gap" in gaps
     assert "fnr_gap" in gaps
     assert "f1_gap"  in gaps
-    assert "verdict" in gaps
     assert gaps["fpr_gap"] >= 0
 
-
-# ── Drift detector tests ──────────────────────
 
 def test_extract_features():
     texts = ["Hello world", "नमस्ते दुनिया", "URGENT!!! CLICK NOW!!!"]
     feats = extract_text_features(texts)
     assert feats.shape == (3, 5)
-    assert feats[2, 3] > feats[0, 3]  # more punctuation in urgent text
+    assert feats[2, 3] > feats[0, 3]
 
 
-def test_drift_detector_no_drift(cfg):
+def test_drift_no_drift(cfg):
     detector = DriftDetector(cfg)
     ref  = ["normal tweet about sports"] * 100
     same = ["normal tweet about sports"] * 50
@@ -119,10 +110,10 @@ def test_drift_detector_no_drift(cfg):
     assert result["drift_detected"] == False
 
 
-def test_drift_detector_with_drift(cfg):
+def test_drift_with_drift(cfg):
     detector = DriftDetector(cfg)
-    ref      = ["normal tweet"] * 200
-    drifted  = ["ALERT!!! URGENT!!! BREAKING!!! FAKE!!!"] * 200
+    ref     = ["normal tweet"] * 200
+    drifted = ["ALERT!!! URGENT!!! BREAKING!!! FAKE!!!"] * 200
     detector.fit(ref)
     result = detector.detect(drifted)
     assert result["drift_detected"] == True

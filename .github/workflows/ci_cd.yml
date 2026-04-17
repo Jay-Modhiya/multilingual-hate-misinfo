@@ -1,9 +1,3 @@
-# ─────────────────────────────────────────────
-#  .github/workflows/ci_cd.yml
-#  CI/CD Pipeline — Multilingual Hate & Misinfo Detector
-#  Jay Modhiya | Krishna Nandi | SIT Pune
-# ─────────────────────────────────────────────
-
 name: CI/CD Pipeline
 
 on:
@@ -13,13 +7,11 @@ on:
     branches: [ main ]
 
 env:
-  AWS_REGION:   ap-south-1
-  ECR_REPO:     muril-hate-misinfo
-  EC2_HOST:     ${{ secrets.EC2_HOST }}
+  AWS_REGION: ap-south-1
+  ECR_REPO:   muril-hate-misinfo
 
 jobs:
 
-  # ── Job 1: Run Tests ──────────────────────
   test:
     name: Run Tests
     runs-on: ubuntu-latest
@@ -37,10 +29,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install torch --index-url https://download.pytorch.org/whl/cpu
-          pip install transformers==4.40.0 datasets
-          pip install pytest pyyaml pandas numpy==1.26.4 scikit-learn scipy
-          pip install mlflow lime matplotlib seaborn
+          pip install pytest pyyaml pandas numpy scikit-learn scipy mlflow matplotlib seaborn
 
       - name: Run data tests
         run: pytest tests/test_data.py -v --tb=short
@@ -48,7 +37,6 @@ jobs:
       - name: Run model tests
         run: pytest tests/test_model.py -v --tb=short
 
-  # ── Job 2: Build & Push Docker Image ─────
   build:
     name: Build & Push to AWS ECR
     runs-on: ubuntu-latest
@@ -70,24 +58,15 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build Docker image
+      - name: Build and Push Docker image
         run: |
           ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG=${{ github.sha }}
           docker build -t $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG .
-          docker tag $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG \
-                     $ECR_REGISTRY/$ECR_REPO:latest
-          echo "IMAGE=$ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG" >> $GITHUB_ENV
-
-      - name: Push to ECR
-        run: |
-          ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG=${{ github.sha }}
+          docker tag $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPO:latest
           docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPO:latest
-          echo "Pushed: $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG"
 
-  # ── Job 3: Deploy to EC2 ──────────────────
   deploy:
     name: Deploy to AWS EC2
     runs-on: ubuntu-latest
@@ -114,15 +93,11 @@ jobs:
           key:      ${{ secrets.EC2_SSH_KEY }}
           script: |
             aws ecr get-login-password --region ap-south-1 | \
-              docker login --username AWS \
-              --password-stdin ${{ steps.login-ecr.outputs.registry }}
+              docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}
             docker pull ${{ steps.login-ecr.outputs.registry }}/muril-hate-misinfo:latest
             docker stop muril-app 2>/dev/null || true
             docker rm   muril-app 2>/dev/null || true
-            docker run -d \
-              --name muril-app \
-              --restart unless-stopped \
+            docker run -d --name muril-app --restart unless-stopped \
               -p 8501:8501 \
               ${{ steps.login-ecr.outputs.registry }}/muril-hate-misinfo:latest
-            echo "Deployment complete ✓"
-            docker ps | grep muril-app
+            echo "Deployed ✓"
