@@ -37,13 +37,16 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install pytest pyyaml pandas numpy scikit-learn scipy
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install transformers==4.40.0 datasets
+          pip install pytest pyyaml pandas numpy==1.26.4 scikit-learn scipy
+          pip install mlflow lime matplotlib seaborn
 
       - name: Run data tests
-        run: pytest tests/test_data.py -v
+        run: pytest tests/test_data.py -v --tb=short
 
       - name: Run model tests
-        run: pytest tests/test_model.py -v
+        run: pytest tests/test_model.py -v --tb=short
 
   # ── Job 2: Build & Push Docker Image ─────
   build:
@@ -110,24 +113,16 @@ jobs:
           username: ec2-user
           key:      ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # Login to ECR
             aws ecr get-login-password --region ap-south-1 | \
               docker login --username AWS \
               --password-stdin ${{ steps.login-ecr.outputs.registry }}
-
-            # Pull latest image
             docker pull ${{ steps.login-ecr.outputs.registry }}/muril-hate-misinfo:latest
-
-            # Stop old container
             docker stop muril-app 2>/dev/null || true
             docker rm   muril-app 2>/dev/null || true
-
-            # Run new container
             docker run -d \
               --name muril-app \
               --restart unless-stopped \
               -p 8501:8501 \
               ${{ steps.login-ecr.outputs.registry }}/muril-hate-misinfo:latest
-
             echo "Deployment complete ✓"
             docker ps | grep muril-app
