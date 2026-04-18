@@ -47,7 +47,14 @@ jobs:
       - name: Build and Push
         run: |
           ECR=${{ steps.login-ecr.outputs.registry }}
-          docker build -t $ECR/muril-hate-misinfo:latest .
+
+          # Show Dockerfile to confirm correct version
+          echo "=== Dockerfile content ==="
+          cat Dockerfile
+          echo "=========================="
+
+          # Build with no cache to force fresh build
+          docker build --no-cache -t $ECR/muril-hate-misinfo:latest .
           docker push $ECR/muril-hate-misinfo:latest
           echo "Pushed ✓"
 
