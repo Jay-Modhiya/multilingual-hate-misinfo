@@ -14,7 +14,6 @@ COPY configs/  configs/
 COPY src/      src/
 COPY app/      app/
 
-# Create directories (models loaded separately)
 RUN mkdir -p models/saved outputs data/raw mlruns logs
 
 EXPOSE 8501
