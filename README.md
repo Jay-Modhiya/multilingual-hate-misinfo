@@ -87,20 +87,20 @@ The project implements the **full MLOps lifecycle**:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        INPUT DATASETS                            │
-│                                                                   │
+│                        INPUT DATASETS                           │
+│                                                                 │
 │   Davidson (EN)        HASOC 2019 (HI/Hinglish)   FakeNewsNet   │
-│   12,970 tweets        5,983 posts                 40,587 news   │
-│   [HuggingFace]        [data/raw/*.tsv + DVC]      [HuggingFace] │
+│   12,970 tweets        5,983 posts                 40,587 news  │
+│   [HuggingFace]        [data/raw/*.tsv + DVC]      [HuggingFace]│
 └─────────────────────────────────────────────────────────────────┘
                                 │
                                 ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                    KAGGLE GPU TRAINING                            │
-│                                                                   │
-│      MuRIL Fine-tuning · Tesla P100-16GB · 5 Epochs              │
+│                    KAGGLE GPU TRAINING                          │
+│                                                                 │
+│      MuRIL Fine-tuning · Tesla P100-16GB · 5 Epochs             │
 │      AdamW lr=1e-5 · Dropout(0.3) · FP16 Mixed Precision        │
-│      notebooks/kaggle_training.ipynb                             │
+│      notebooks/kaggle_training.ipynb                            │
 └─────────────────────────────────────────────────────────────────┘
                                 │
               ┌─────────────────┼─────────────────┐
@@ -112,20 +112,20 @@ The project implements the **full MLOps lifecycle**:
          └─────────┘     └──────────┘      └──────────┘
                                 │
                                 ▼
-┌─────────────────────────────────────────────────────────────────┐
-│               MODULAR SOURCE CODE (VS Code)                      │
+┌─────────────────────────────────────────────────────────────────  ┐
+│               MODULAR SOURCE CODE (VS Code)                       │
 │                                                                   │
 │  src/data/      src/models/    src/training/    src/explainability│
 │  src/bias/      src/monitoring/                                   │
-└─────────────────────────────────────────────────────────────────┘
+└─────────────────────────────────────────────────────────────────  ┘
                                 │
               ┌─────────────────┼─────────────────┐
               ▼                 ▼                  ▼
-      ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐
-      │  Streamlit   │  │    Docker    │  │  GitHub Actions  │
-      │   UI Demo    │  │  Container   │  │   CI/CD (3 jobs) │
+      ┌──────────────┐  ┌──────────────┐  ┌────────────────── ┐
+      │  Streamlit   │  │    Docker    │  │  GitHub Actions   │
+      │   UI Demo    │  │  Container   │  │   CI/CD (3 jobs)  │
       │  (6 pages)   │  │  AWS ECR     │  │  Test→Build→Deploy│
-      └──────────────┘  └──────────────┘  └──────────────────┘
+      └──────────────┘  └──────────────┘  └────────────────── ┘
                                                     │
                                                     ▼
                                          ┌──────────────────┐
