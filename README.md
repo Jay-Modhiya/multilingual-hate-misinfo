@@ -797,7 +797,7 @@ The full CA-4 MLOps project report is available in the repository:
 **Programme:** MTech Artificial Intelligence & Machine Learning
 **Subject:** NLPA + MLOps (CA-4 Mini Project)
 **Academic Year:** 2025–2026
-**Supervisor:** Dr. Anupkumar M Bongale
+**Supervisor:** Prof. Shridhar Shende 
 
 ---
 
