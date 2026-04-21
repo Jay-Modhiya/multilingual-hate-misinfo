@@ -88,8 +88,8 @@ mlflow:
 
 # ── Explainability (LIME) ─────────────────────
 lime:
-  num_features:    15
-  num_samples:     500
+  num_features:    10
+  num_samples:     50
   top_labels:      1
 
 # ── Bias Analysis ─────────────────────────────
@@ -110,3 +110,4 @@ aws:
   ecr_repo:        "muril-hate-misinfo"
   ec2_instance:    "t2.micro"    # free tier
   port:            8501          # Streamlit default
+  

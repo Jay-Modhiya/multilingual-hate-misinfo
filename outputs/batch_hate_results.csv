@@ -1,0 +1,11 @@
+text,predicted_label,confidence,prob_class_0,prob_class_1,processing_time_ms,task,model,timestamp
+"You people don't belong here, go back to your country.",hate,87.38,12.62,87.38,1937.78,hate,google/muril-base-cased,2026-04-19T14:37:28.934476
+I hate all people from that community.,not_hate,90.6,90.6,9.4,1937.78,hate,google/muril-base-cased,2026-04-19T14:37:28.934476
+I love watching cricket matches with my friends.,not_hate,91.07,91.07,8.93,1937.78,hate,google/muril-base-cased,2026-04-19T14:37:28.934476
+The weather is beautiful today in Mumbai.,not_hate,91.07,91.07,8.93,1937.78,hate,google/muril-base-cased,2026-04-19T14:37:28.934476
+तुम जैसे लोगों को यहाँ नहीं रहना चाहिए।,hate,88.51,11.49,88.51,195.61,hate,google/muril-base-cased,2026-04-19T14:37:28.934476
+इन लोगों से नफरत है मुझे।,not_hate,87.89,87.89,12.11,195.61,hate,google/muril-base-cased,2026-04-19T14:37:28.934476
+आज मौसम बहुत अच्छा है।,not_hate,90.37,90.37,9.63,195.61,hate,google/muril-base-cased,2026-04-19T14:37:28.934476
+मुझे क्रिकेट देखना पसंद है।,not_hate,89.76,89.76,10.24,195.61,hate,google/muril-base-cased,2026-04-19T14:37:28.934476
+"Yeh log bahut bure hain, inhe bahar nikalo.",hate,51.73,48.27,51.73,191.89,hate,google/muril-base-cased,2026-04-19T14:37:28.934476
+"Aaj match dekhne ka plan hai, bahut maza aayega.",not_hate,90.88,90.88,9.12,191.89,hate,google/muril-base-cased,2026-04-19T14:37:28.934476

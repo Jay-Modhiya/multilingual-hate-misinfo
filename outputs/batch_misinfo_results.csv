@@ -1,0 +1,7 @@
+text,predicted_label,confidence,prob_class_0,prob_class_1,processing_time_ms,task,model,timestamp
+Scientists confirm 5G towers are spreading the virus to control population.,real,97.56,97.56,2.44,291.69,misinfo,google/muril-base-cased,2026-04-19T14:37:59.159825
+Secret cure for cancer suppressed by pharmaceutical companies.,real,97.69,97.69,2.31,291.69,misinfo,google/muril-base-cased,2026-04-19T14:37:59.159825
+"Microchips found in COVID vaccines, insider reveals.",real,97.67,97.67,2.33,291.69,misinfo,google/muril-base-cased,2026-04-19T14:37:59.159825
+Government announces new infrastructure budget for rural development.,real,97.62,97.62,2.38,291.69,misinfo,google/muril-base-cased,2026-04-19T14:37:59.159825
+Scientists discover new species of deep-sea fish in Pacific Ocean.,real,97.32,97.32,2.68,191.39,misinfo,google/muril-base-cased,2026-04-19T14:37:59.159825
+Olympic committee announces host city for 2032 games.,real,97.37,97.37,2.63,191.39,misinfo,google/muril-base-cased,2026-04-19T14:37:59.159825
